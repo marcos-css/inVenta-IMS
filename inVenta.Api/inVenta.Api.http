@@ -1,6 +1,13 @@
-@inVenta.Api_HostAddress = http://localhost:5166
+@hostname = http://localhost:5000
 
-GET {{inVenta.Api_HostAddress}}/weatherforecast/
+### Crear una nueva categoría
+POST {{hostname}}/api/categorias
+Content-Type: application/json
+
+{
+  "nombre": "Bebidas"
+}
+
+### Obtener todas las categorías
+GET {{hostname}}/api/categorias
 Accept: application/json
-
-###

@@ -1,1 +1,4 @@
-<Solution />
+<Solution>
+  <Project Path="inVenta.Api/inVenta.Api.csproj" />
+  <Project Path="inVenta.Shared/inVenta.Shared.csproj" />
+</Solution>
