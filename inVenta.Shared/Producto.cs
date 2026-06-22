@@ -1,16 +1,22 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 namespace inVenta.Shared
 {
     public class Producto
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
+        [Required(ErrorMessage = "El nombre del producto es obligatorio")]
+        [MinLength(3, ErrorMessage = "El nombre debe tener al menos 3 caracteres")]
         public string Nombre { get; set; } = string.Empty;
-        public string Marca { get; set; } = string.Empty;
+        public string? Marca { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public string CategoriaId { get; set; } = string.Empty; 
         public bool EstadoActivo { get; set; } = true;
         public bool Sincronizado { get; set; } = false;
         public DateTime FechaActualizacion { get; set;  } = DateTime.UtcNow;
+
+        // Propiedad de navegación para la relación con Categoria
+        public Categoria? Categoria { get; set; }
 
     }
 }

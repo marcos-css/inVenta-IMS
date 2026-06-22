@@ -12,7 +12,7 @@ using inVenta.Api.Data;
 namespace inVenta.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260619223247_InitialCreate")]
+    [Migration("20260621051052_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -55,7 +55,7 @@ namespace inVenta.Api.Migrations
 
                     b.Property<string>("CategoriaId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("EstadoActivo")
                         .HasColumnType("bit");
@@ -80,7 +80,20 @@ namespace inVenta.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoriaId");
+
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("inVenta.Shared.Producto", b =>
+                {
+                    b.HasOne("inVenta.Shared.Categoria", "Categoria")
+                        .WithMany()
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
                 });
 #pragma warning restore 612, 618
         }

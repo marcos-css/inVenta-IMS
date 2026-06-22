@@ -1,13 +1,88 @@
 @hostname = http://localhost:5000
 
+# ==================CATEGORIAS==================
+
 ### Crear una nueva categoría
 POST {{hostname}}/api/categorias
 Content-Type: application/json
 
 {
-  "nombre": "Bebidas"
+  "nombre": "Lacteos"
 }
 
 ### Obtener todas las categorías
 GET {{hostname}}/api/categorias
 Accept: application/json
+
+### Obtener una categoria por ID
+GET {{hostname}}/api/categorias/ca27ed87-1ce8-4fcb-a938-18bdc8240116
+Accept: application/json
+
+### TEST error 404 en categorias
+GET {{hostname}}/api/categorias/999 
+Accept: application/json
+
+### TEST validacion de error Bad Request (400)
+POST {{hostname}}/api/categorias
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### Actualizar una categoría existente
+PUT {{hostname}}/api/categorias/id
+Content-Type: application/json
+
+{
+  "nombre": "Bebidas Refrescantes"
+}
+
+### Eliminar una categoría (soft delete)
+DELETE {{hostname}}/api/categorias/id
+
+#=================PRODUCTOS==================
+
+### Crear nuevo producto
+POST {{hostname}}/api/productos
+Content-Type: application/json
+
+{
+  "nombre": "Coca Cola 2.5L No Retornable",
+  "marca": "Coca Cola",
+  "precio": 48.00,
+  "categoriaId": "8c3e8b3b-fc3c-4b6e-b9f8-529ef2598d9f"
+}
+
+### Obtener todos los productos
+GET {{hostname}}/api/productos
+Accept: application/json
+
+### Obtener un producto por ID
+GET {{hostname}}/api/productos/0c986e0f-5a4e-4b60-b2f1-e7ab81619fcd
+Accept: application/json
+
+### TEST error 400 en productos
+POST {{hostname}}/api/productos/
+Content-Type: application/json
+
+{
+  "nombre": "Producto X",
+  "marca": "Genérica",
+  "precio": 10,
+  "categoriaId": "id_inexistente"
+}
+
+### Actualizar un producto existente
+PUT {{hostname}}/api/productos/50894281-db3f-408e-8bf7-2dbe2863dbc6
+Content-Type: application/json
+
+{
+  "nombre": "Coca Cola 235ml",
+  "marca": "Coca Cola",
+  "precio": 12.00,
+  "categoriaId": "8c3e8b3b-fc3c-4b6e-b9f8-529ef2598d9f"
+}
+
+### Eliminar un producto (soft delete)
+DELETE {{hostname}}/api/productos/0c986e0f-5a4e-4b60-b2f1-e7ab81619fcd
