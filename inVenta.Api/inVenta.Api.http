@@ -27,19 +27,19 @@ POST {{hostname}}/api/categorias
 Content-Type: application/json
 
 {
-  "nombre": ""
+  "nombre": "a"
 }
 
 ### Actualizar una categoría existente
-PUT {{hostname}}/api/categorias/id
+PUT {{hostname}}/api/categorias/ca27ed87-1ce8-4fcb-a938-18bdc8240116
 Content-Type: application/json
 
 {
-  "nombre": "Bebidas Refrescantes"
+  "nombre": "Dulces"
 }
 
 ### Eliminar una categoría (soft delete)
-DELETE {{hostname}}/api/categorias/id
+DELETE {{hostname}}/api/categorias/67e2587a-30f0-4e7c-b355-ea6cb4724a4a
 
 #=================PRODUCTOS==================
 
