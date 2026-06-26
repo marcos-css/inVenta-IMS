@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { Categoria, Producto } from "../types";
 
 export async function getDatabaseConnection() {
   return await SQLite.openDatabaseAsync("inventa.db");
@@ -37,6 +38,63 @@ export async function inicializarBaseDeDatos() {
     console.log("Base de datos SQLite inicializada correctamente");
   } catch (error) {
     console.error("Error al inicializar la base de datos local:", error);
+    throw error;
+  }
+}
+
+export async function obtenerProductosLocales(): Promise<Producto[]> {
+  const db = await getDatabaseConnection();
+
+  try {
+    const productos = await db.getAllSync<Producto>(
+      "SELECT * FROM productos WHERE estadoActivo = 1;",
+    );
+    return productos;
+  } catch (error) {
+    console.log("Error al obtener productos: ", error);
+    return [];
+  }
+}
+
+export async function insertarProducto() {
+  const db = await getDatabaseConnection();
+  const randomID = Math.random().toString(36).substring(7);
+
+  try {
+    await db.runAsync(
+      `INSERT INTO productos(id, nombre, marca, precio, categoriaId, estadoActivo, sincronizado, fechaActualizacion)
+      VALUES(?,?,?,?,?,?,?,?)`,
+      [
+        randomID,
+        `Producto ${randomID}`,
+        "Marca Genérica",
+        Math.floor(Math.random() * 500) + 50,
+        "cat-1",
+        1,
+        0,
+        new Date().toISOString(),
+      ],
+    );
+    console.log("Producto ingresado correctamente");
+  } catch (error) {
+    console.error("Error al insertar: ", error);
+    throw error;
+  }
+}
+
+export async function insertarCategorias(nombre: string) {
+  const db = await getDatabaseConnection();
+  const id = Math.random().toString(36).substring(7); // id temporal
+
+  try {
+    await db.runAsync(
+      `INSERT INTO categorias(id, nombre, estadoActivo, sincronizado, fechaActualizacion)
+      VALUES(?,?,?,?,?)`,
+      [id, nombre, true, false, new Date().toISOString()],
+    );
+    console.log(`Categoría ${nombre} guardada en SQLite`);
+  } catch (error) {
+    console.error("Error al insertar categoría:", error);
     throw error;
   }
 }
