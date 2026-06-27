@@ -9,6 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 import React from "react";
+import { Colors } from "../../constants/colors";
 
 interface Props {
   text: string;
@@ -59,26 +60,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#212529",
+    backgroundColor: Colors.primary,
   },
   secondaryButton: {
-    backgroundColor: "#F8F9FA",
+    backgroundColor: Colors.secondary,
     borderWidth: 1,
-    borderColor: "#989da1ff",
+    borderColor: Colors.borderDark,
   },
   disabledButton: {
-    backgroundColor: "#ADB5BD",
+    backgroundColor: Colors.gray300,
   },
   textBase: {
-    color: "#FFFFFF",
+    color: Colors.textLight,
     fontSize: 16,
     fontWeight: "600",
   },
   secondaryText: {
-    color: "#212529",
+    color: Colors.text,
   },
   disabledText: {
-    color: "#F8F9FA",
+    color: Colors.secondary,
   },
 });
 

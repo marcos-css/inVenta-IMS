@@ -12,6 +12,7 @@ import { RootStackParamList } from "../../App";
 
 import ProductoCard from "../components/ProductoCard";
 import { useProductos } from "../hooks/useProductos";
+import { Colors } from "../constants/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -59,7 +60,7 @@ export function HomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8F9FA" },
+  container: { flex: 1, backgroundColor: Colors.background },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -67,31 +68,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 20,
     paddingTop: 40,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.cardBackground,
     borderBottomWidth: 1,
-    borderBottomColor: "#E9ECEF",
+    borderBottomColor: Colors.border,
   },
   title: {
     fontSize: 32,
     fontWeight: "800",
-    color: "#212529",
+    color: Colors.text,
     letterSpacing: -1,
   },
-  subtitle: { fontSize: 14, color: "#868E96", marginTop: 2 },
+  subtitle: { fontSize: 14, color: Colors.textMuted, marginTop: 2 },
   button: {
-    backgroundColor: "#212529",
+    backgroundColor: Colors.primary,
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 8,
   },
-  buttonText: { color: "#FFFFFF", fontWeight: "600", fontSize: 13 },
+  buttonText: { color: Colors.textLight, fontWeight: "600", fontSize: 13 },
   listContainer: { padding: 16, gap: 12 },
   emptyContainer: {
     alignItems: "center",
     marginTop: 40,
     paddingHorizontal: 40,
   },
-  emptyText: { color: "#ADB5BD", fontSize: 16, textAlign: "center" },
+  emptyText: { color: Colors.gray300, fontSize: 16, textAlign: "center" },
   inlineButton: { marginTop: 12 },
-  inlineButtonText: { color: "#2b6cb0", fontWeight: "600", fontSize: 15 },
+  inlineButtonText: { color: Colors.link, fontWeight: "600", fontSize: 15 },
 });

@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Producto } from "../types";
+import { Colors } from "../constants/colors";
 
 interface Props {
     producto: Producto;
@@ -22,10 +23,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.cardBackground,
         padding: 16,
         borderRadius: 12,
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
@@ -38,16 +39,16 @@ const styles = StyleSheet.create({
     productName: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#212529',
+        color: Colors.text,
     },
     productBrand:{
         fontSize: 13,
-        color: '#868E96',
+        color: Colors.textMuted,
         marginTop: 4,
     },
     productPrice:{
         fontSize: 18,
         fontWeight: '700',
-        color: '#000000',
+        color: Colors.black,
     }
 })

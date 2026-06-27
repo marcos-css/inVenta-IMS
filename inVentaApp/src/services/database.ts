@@ -46,7 +46,7 @@ export async function obtenerProductosLocales(): Promise<Producto[]> {
   const db = await getDatabaseConnection();
 
   try {
-    const productos = await db.getAllSync<Producto>(
+    const productos = await db.getAllAsync<Producto>(
       "SELECT * FROM productos WHERE estadoActivo = 1;",
     );
     return productos;
@@ -90,11 +90,38 @@ export async function insertarCategorias(nombre: string) {
     await db.runAsync(
       `INSERT INTO categorias(id, nombre, estadoActivo, sincronizado, fechaActualizacion)
       VALUES(?,?,?,?,?)`,
-      [id, nombre, true, false, new Date().toISOString()],
+      [id, nombre, 1, 0, new Date().toISOString()],
     );
     console.log(`Categoría ${nombre} guardada en SQLite`);
   } catch (error) {
     console.error("Error al insertar categoría:", error);
+    throw error;
+  }
+}
+
+export async function obtenerCategorias(): Promise<Categoria[]> {
+  const db = await getDatabaseConnection();
+  try {
+    const categorias = await db.getAllAsync<Categoria>(
+      "SELECT * FROM categorias WHERE estadoActivo = 1;",
+    );
+    return categorias;
+  } catch (error) {
+    console.log("Error al obtener categorias: ", error);
+    return [];
+  }
+}
+export async function eliminarCategoria(id: string) {
+  const db = await getDatabaseConnection();
+
+  try {
+    await db.runAsync(
+      "UPDATE categorias SET estadoActivo = 0, sincronizado = 0, fechaActualizacion = ? WHERE id = ?;",
+      [new Date().toISOString(), id],
+    );
+    console.log(`Categoría marcada como inactiva`);
+  } catch (error) {
+    console.error("No se pudo eliminar la categoría", error);
     throw error;
   }
 }

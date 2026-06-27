@@ -6,13 +6,14 @@ import {
   Text,
 } from "react-native";
 import React from "react";
+import { Colors } from "../../constants/colors";
 
 interface Props extends TextInputProps {
   label?: string;
   error?: string;
 }
 
-export const Input = ({ label, error, style, placeholder, ...rest }: Props) => {
+export const Input = ({ label, error, style, ...rest }: Props) => {
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -34,22 +35,22 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 6,
-    color: "#333",
+    color: Colors.gray700,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#CED4DA",
+    borderColor: Colors.gray200,
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
-    color: "#212529",
-    backgroundColor: "#F8F9FA",
+    color: Colors.text,
+    backgroundColor: Colors.gray50,
   },
   inputError: {
-    borderColor: "#E03131",
+    borderColor: Colors.error,
   },
   errorText: {
-    color: "#E03131",
+    color: Colors.error,
     fontSize: 12,
     marginTop: 4,
   },

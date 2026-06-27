@@ -1,7 +1,9 @@
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { CategoriaForm } from "./src/components/forms/CategoriaForm";
+import { inicializarBaseDeDatos } from "./src/services/database";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -11,6 +13,12 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  useEffect(() => {
+    inicializarBaseDeDatos().catch((err) => {
+      console.error("Error al inicializar la base de datos al arrancar la app:", err);
+    });
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
