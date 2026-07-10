@@ -1,6 +1,7 @@
 // src/hooks/useProductos.ts
 import { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSQLiteContext } from "expo-sqlite";
 import { Producto } from "../types";
 import {
   obtenerProductosLocales,
@@ -8,11 +9,12 @@ import {
 } from "../services/database";
 
 export function useProductos() {
+  const db = useSQLiteContext();
   const [productos, setProductos] = useState<Producto[]>([]);
 
   const cargarProductos = async () => {
     try {
-      const data = await obtenerProductosLocales();
+      const data = await obtenerProductosLocales(db);
       setProductos(data);
     } catch (error) {
       console.error("Error al cargar productos locales:", error);
@@ -27,7 +29,7 @@ export function useProductos() {
 
   const agregarProductoPrueba = async () => {
     try {
-      await insertarProducto();
+      await insertarProducto(db);
       await cargarProductos();
     } catch (error) {
       console.error("Error al insertar producto de prueba:", error);

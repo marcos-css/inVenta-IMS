@@ -14,7 +14,7 @@ import { Colors } from "../../constants/colors";
 interface Props {
   text: string;
   onPress: (event: GestureResponderEvent) => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
@@ -35,6 +35,7 @@ export const Button = ({
       style={[
         styles.buttonBase,
         variant === "secondary" && styles.secondaryButton,
+        variant === "danger" && styles.dangerButton,
         disabled && styles.disabledButton,
         style,
       ]}
@@ -66,6 +67,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
     borderWidth: 1,
     borderColor: Colors.borderDark,
+  },
+  dangerButton: {
+    backgroundColor: Colors.error,
   },
   disabledButton: {
     backgroundColor: Colors.gray300,

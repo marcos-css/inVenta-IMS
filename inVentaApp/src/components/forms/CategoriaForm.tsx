@@ -9,58 +9,28 @@ import {
 } from "react-native";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  eliminarCategoria,
-  insertarCategorias,
-  obtenerCategorias,
-} from "../../services/database";
+import React, { useState } from "react";
 import { Categoria } from "../../types";
 import { Colors } from "../../constants/colors";
 import Checkbox from "expo-checkbox";
+import { useCategorias } from "../../hooks/useCategorias";
 
-export const CategoriaForm = () => {
+export function CategoriaForm() {
+  const {
+    categorias,
+    isEdit,
+    setIsEdit,
+    selectedIds,
+    setSelectedIds,
+    guardarCategoria,
+    borrarCategoria,
+    borrarCategoriasBulk,
+    handleToggle,
+  } = useCategorias();
+
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   const isValid = inputValue.trim().length >= 3;
-
-  const cargarCategorias = useCallback(async () => {
-    const datos = await obtenerCategorias();
-    setCategorias(datos);
-  }, []);
-
-  useEffect(() => {
-    cargarCategorias();
-  }, [cargarCategorias]);
-
-  const handleGuardar = async () => {
-    if (!isValid) {
-      setError("El nombre debe tener al menos 3 caracteres");
-      return;
-    }
-    if (
-      categorias.some(
-        (cat) => cat.nombre.toUpperCase() === inputValue.trim().toUpperCase(),
-      )
-    ) {
-      setError("Esta categoría ya existe.");
-      return;
-    }
-    setError("");
-
-    try {
-      await insertarCategorias(inputValue.trim());
-      setInputValue("");
-      await cargarCategorias();
-    } catch (error) {
-      console.error("Error al guardar en BD:", error);
-      Alert.alert("Error", "No se pudo guardar la categoría localmente.");
-    }
-  };
 
   const handleTextChange = (texto: string) => {
     const textoNormalizado = texto.toUpperCase();
@@ -68,33 +38,62 @@ export const CategoriaForm = () => {
     if (error && textoNormalizado.trim().length >= 3) setError("");
   };
 
-  const handleToggle = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    );
+  const handleGuardar = async () => {
+    if (!isValid) return setError("El nombre debe tener al menos 3 caracteres");
+
+    if (
+      categorias.some(
+        (cat) => cat.nombre.toUpperCase() === inputValue.trim().toUpperCase(),
+      )
+    )
+      return setError("Esta categoría ya existe.");
+
+    setError("");
+    try {
+      await guardarCategoria(inputValue);
+      setInputValue("");
+    } catch (error) {
+      console.error("Error al guardar categoría:", error);
+      Alert.alert("Error", "No se pudo guardar la categoría.");
+    }
   };
 
-  const handleEliminar = async (id: string) => {
+  const handleEliminar = async (id: string, nombre: string) => {
     Alert.alert(
-      "Confirmar eliminación",
-      "Se eliminarán todos los productos asociados a esta categoría.",
+      "Eliminar categoría",
+      `¿Está seguro de eliminar la categoría "${nombre}"?`,
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-          onPress: () => console.log("Cancelado"),
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Eliminar",
           style: "destructive",
           onPress: async () => {
             try {
-              await eliminarCategoria(id);
-
-              setCategorias((prev) => prev.filter((cat) => cat.id !== id));
-              setSelectedIds((prev) => prev.filter((itemId) => itemId !== id));
-            } catch (err) {
+              await borrarCategoria(id);
+            } catch (error) {
               Alert.alert("Error", "No se pudo eliminar la categoría.");
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const handleEliminarSeleccionados = async (ids: string[]) => {
+    const s = ids.length > 1 ? "s" : "";
+    Alert.alert(
+      "Eliminar categorías",
+      `¿Está seguro de eliminar ${ids.length} categoría${s}?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await borrarCategoriasBulk(ids);
+            } catch (error) {
+              Alert.alert("Error", "No se pudo eliminar las categorías.");
             }
           },
         },
@@ -111,6 +110,12 @@ export const CategoriaForm = () => {
       <Pressable
         style={[styles.itemContainer, selectedStyle]}
         onPress={() => handleToggle(item.id)}
+        onLongPress={() => {
+          setIsEdit(true);
+          setSelectedIds((prev) =>
+            prev.includes(item.id) ? prev : [...prev, item.id],
+          );
+        }}
       >
         <View style={styles.itemLeftContainer}>
           {isEdit && (
@@ -127,7 +132,7 @@ export const CategoriaForm = () => {
           <TouchableOpacity
             onPress={(e) => {
               e.stopPropagation();
-              handleEliminar(item.id);
+              handleEliminar(item.id, item.nombre);
             }}
           >
             <Text style={styles.deleteButtonText}>✕</Text>
@@ -178,10 +183,19 @@ export const CategoriaForm = () => {
             </View>
           }
         />
+        <Button
+          text={`Eliminar ${selectedIds.length} categoría${selectedIds.length === 1 ? "" : "s"}`}
+          onPress={() => handleEliminarSeleccionados(selectedIds)}
+          variant="danger"
+          style={[
+            styles.deleteAllButton,
+            selectedIds.length ? { display: "flex" } : { display: "none" },
+          ]}
+        />
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -218,23 +232,31 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 16,
   },
+  deleteAllButton: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    height: 55,
+  },
   title: {
     fontSize: 18,
     fontWeight: "700",
     color: Colors.text,
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 150,
   },
   itemContainer: {
     backgroundColor: Colors.cardBackground,
-    padding: 16,
+    paddingHorizontal: 16,
     borderRadius: 8,
     marginBottom: 8,
     borderWidth: 1,
     borderColor: Colors.border,
     flexDirection: "row",
     gap: 10,
+    height: 55,
     alignItems: "center",
   },
   itemLeftContainer: {
@@ -247,9 +269,9 @@ const styles = StyleSheet.create({
     color: Colors.error,
     fontSize: 16,
     fontWeight: "bold",
-    borderColor: Colors.error,
-    borderWidth: 1,
-    flex: 1,
+    height: "100%",
+    textAlignVertical: "center",
+    paddingHorizontal: 10,
   },
   listText: {
     fontSize: 16,
